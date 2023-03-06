@@ -1,6 +1,8 @@
 const BlogPostService = require('../services/post.service');
 const categoryService = require('../services/category.service');
-const { BAD_REQUEST, CREATED, OK, NOT_FOUND, UNAUTHORIZED } = require('../utils/statusCodes');
+const {
+  BAD_REQUEST,
+  CREATED, OK, NOT_FOUND, UNAUTHORIZED, NO_CONTENT } = require('../utils/statusCodes');
 
 const createPost = async (req, res) => {
   const { title, content, categoryIds } = req.body;
@@ -55,7 +57,7 @@ const updatePost = async (req, res) => {
   const postOwner = await BlogPostService.getById(postId);
 
   if (!postOwner) {
-    return res.status(BAD_REQUEST).json({ message: 'Post does not exist' });
+    return res.status(NOT_FOUND).json({ message: 'Post does not exist' });
   }
   
   if (userId !== postOwner.userId) {
@@ -67,9 +69,28 @@ const updatePost = async (req, res) => {
   res.status(OK).json(updatedPost);
 };
 
+const deletePost = async (req, res) => {
+  const postId = req.params.id;
+  const userId = req.user.id;
+
+  const postOwner = await BlogPostService.getById(postId);
+
+  if (!postOwner) {
+    return res.status(NOT_FOUND).json({ message: 'Post does not exist' });
+  }
+  
+  if (userId !== postOwner.userId) {
+    return res.status(UNAUTHORIZED).json({ message: 'Unauthorized user' });
+  }
+  
+  await BlogPostService.deletePost(postId);
+  res.status(NO_CONTENT).end();
+};
+
 module.exports = {
   createPost,
   getAll,
   getById,
   updatePost,
+  deletePost,
 };
