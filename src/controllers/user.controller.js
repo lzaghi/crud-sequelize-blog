@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { validateCredentials } = require('../middlewares/createUser.middleware.js');
+const { validateCredentials } = require('../utils/validateCredentials.js');
 const userService = require('../services/user.service.js');
 const { OK, BAD_REQUEST, CREATED, CONFLICT } = require('../utils/statusCodes.js');
 
@@ -41,7 +41,19 @@ const createUser = async (req, res) => {
   res.status(CREATED).send({ token });
 };
 
+const getAll = async (_req, res) => {
+  const users = await userService.getAll();
+
+  const filteredUsers = users.map((user) => {
+    const { password: _, ...rest } = user.dataValues;
+    return rest;
+  });
+
+  res.status(OK).json(filteredUsers);
+};
+
 module.exports = {
   login,
   createUser,
+  getAll,
 };

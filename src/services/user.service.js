@@ -7,6 +7,13 @@ const login = async (email, password) => {
   return user;
 };
 
+const getById = async (id) => {
+  const user = await User.findOne({
+    where: { id },
+  });
+  return user;
+}; 
+
 const getByEmail = async (email) => {
   const user = await User.findOne({
     where: { email },
@@ -19,8 +26,15 @@ const createUser = async (displayName, email, password, image) => {
   return newUser;
 };
 
+const getAll = async () => {
+  const users = await User.findAll();
+  return users;
+};
+
 module.exports = {
   login,
+  getById,
   getByEmail,
   createUser,
+  getAll,
 };
