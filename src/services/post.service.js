@@ -47,6 +47,7 @@ const deletePost = async (id) => {
   await BlogPost.destroy({
     where: { id },
   });
+  return null;
 };
 
 module.exports = {

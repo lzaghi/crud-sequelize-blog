@@ -31,10 +31,18 @@ const getAll = async () => {
   return users;
 };
 
+const deleteUser = async (id) => {
+  await User.destroy({
+    where: { id },
+  });
+  return null;
+};
+
 module.exports = {
   login,
   getById,
   getByEmail,
   createUser,
   getAll,
+  deleteUser,
 };

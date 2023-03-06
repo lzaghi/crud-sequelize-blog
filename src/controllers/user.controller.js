@@ -1,7 +1,9 @@
 const jwt = require('jsonwebtoken');
 const { validateCredentials } = require('../utils/validateCredentials.js');
 const userService = require('../services/user.service.js');
-const { OK, BAD_REQUEST, CREATED, CONFLICT, NOT_FOUND } = require('../utils/statusCodes.js');
+const {
+  OK,
+  BAD_REQUEST, CREATED, CONFLICT, NOT_FOUND, NO_CONTENT } = require('../utils/statusCodes.js');
 
 const secret = process.env.JWT_SECRET;
 const jwtConfig = {
@@ -66,9 +68,18 @@ const getById = async (req, res) => {
   res.status(OK).json(filteredUser);
 };
 
+const deleteUser = async (req, res) => {
+  const userId = req.user.id;
+
+  await userService.deleteUser(userId);
+
+  res.status(NO_CONTENT).end();
+};
+
 module.exports = {
   login,
   createUser,
   getAll,
   getById,
+  deleteUser,
 };
