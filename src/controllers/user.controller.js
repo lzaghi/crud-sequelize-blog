@@ -14,7 +14,7 @@ const login = async (req, res) => {
   const user = await userService.login(email, password);
   
   if (!user) {
-    return res.status(BAD_REQUEST).send({ message: 'Invalid fields' });
+    return res.status(BAD_REQUEST).json({ message: 'Invalid fields' });
   }
 
   const token = jwt.sign({ data: { userId: user.id } }, secret, jwtConfig);
@@ -26,11 +26,11 @@ const createUser = async (req, res) => {
   const { displayName, email, password, image } = req.body;
   
   const { error } = validateCredentials(req.body);
-  if (error) return res.status(BAD_REQUEST).send({ message: error.message });
+  if (error) return res.status(BAD_REQUEST).json({ message: error.message });
 
   const usedEmail = await userService.getByEmail(email);
   if (usedEmail) {
-    return res.status(CONFLICT).send({ message: 'User already registered' });
+    return res.status(CONFLICT).json({ message: 'User already registered' });
   }
 
   const newUser = await userService.createUser(displayName, email, password, image);
@@ -58,7 +58,7 @@ const getById = async (req, res) => {
   const user = await userService.getById(+id);
 
   if (!user) {
-    return res.status(NOT_FOUND).send({ message: 'User does not exist' });
+    return res.status(NOT_FOUND).json({ message: 'User does not exist' });
   }
 
   const { password: _, ...filteredUser } = user.dataValues;
