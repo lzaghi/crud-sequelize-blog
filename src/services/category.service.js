@@ -10,7 +10,15 @@ const getAll = async () => {
   return users;
 };
 
+const getById = async (id) => {
+  const category = await Category.findOne({
+    where: { id },
+  });
+  return category;
+};
+
 module.exports = {
   createCategory,
   getAll,
+  getById,
 };
