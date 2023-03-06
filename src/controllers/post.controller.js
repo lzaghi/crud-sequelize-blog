@@ -1,6 +1,6 @@
 const BlogPostService = require('../services/post.service');
 const categoryService = require('../services/category.service');
-const { BAD_REQUEST, CREATED, OK, NOT_FOUND } = require('../utils/statusCodes');
+const { BAD_REQUEST, CREATED, OK, NOT_FOUND, UNAUTHORIZED } = require('../utils/statusCodes');
 
 const createPost = async (req, res) => {
   const { title, content, categoryIds } = req.body;
@@ -43,8 +43,33 @@ const getById = async (req, res) => {
   res.status(OK).json(post);
 };
 
+const updatePost = async (req, res) => {
+  const { title, content } = req.body;
+  const postId = req.params.id;
+  const userId = req.user.id;
+
+  if (!title || !content) {
+    return res.status(BAD_REQUEST).json({ message: 'Some required fields are missing' });
+  }
+
+  const postOwner = await BlogPostService.getById(postId);
+
+  if (!postOwner) {
+    return res.status(BAD_REQUEST).json({ message: 'Post does not exist' });
+  }
+  
+  if (userId !== postOwner.userId) {
+    return res.status(UNAUTHORIZED).json({ message: 'Unauthorized user' });
+  }
+
+  await BlogPostService.updatePost(req.body, postId);
+  const updatedPost = await await BlogPostService.getById(postId);
+  res.status(OK).json(updatedPost);
+};
+
 module.exports = {
   createPost,
   getAll,
   getById,
+  updatePost,
 };

@@ -32,9 +32,21 @@ const getById = async (id) => {
   return post;
 };
 
+const updatePost = async (post, id) => {
+  const updatedPost = await BlogPost.update(post, {
+    where: { id },
+    include: [
+      { model: User, as: 'user', attributes: { exclude: ['password'] } },
+      { model: Category, as: 'categories', through: { attributes: [] } },
+    ],
+  });
+  return updatedPost;
+};
+
 module.exports = {
   createPost,
   createLink,
   getAll,
   getById,
+  updatePost,
 };
