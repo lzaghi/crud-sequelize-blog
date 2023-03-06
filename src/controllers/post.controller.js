@@ -1,6 +1,6 @@
 const BlogPostService = require('../services/post.service');
 const categoryService = require('../services/category.service');
-const { BAD_REQUEST, CREATED } = require('../utils/statusCodes');
+const { BAD_REQUEST, CREATED, OK } = require('../utils/statusCodes');
 
 const createPost = async (req, res) => {
   const { title, content, categoryIds } = req.body;
@@ -25,6 +25,13 @@ const createPost = async (req, res) => {
     .map(async (catId) => BlogPostService.createLink(newPost.dataValues.id, catId)));
 };
 
+const getAll = async (_req, res) => {
+  const posts = await BlogPostService.getAll();
+
+  res.status(OK).json(posts);
+};
+
 module.exports = {
   createPost,
+  getAll,
 };
